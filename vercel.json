@@ -1,17 +1,19 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "cleanUrls": true,
   "rewrites": [
     {
       "source": "/",
-      "destination": "/web/index.html"
+      "destination": "/index.html"
     },
     {
       "source": "/app",
-      "destination": "/web/app.html"
+      "destination": "/app.html"
     },
     {
       "source": "/static/(.*)",
-      "destination": "/web/$1"
+      "destination": "/$1"
     }
   ]
 }

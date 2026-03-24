@@ -4,6 +4,7 @@ src/helix_proto/__pycache__/
 demo-output/
 *-demo/
 *-demo-*/
+dist/
 workspace/
 workspace-agentic/
 workspace-e2e/
