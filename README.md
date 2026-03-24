@@ -245,7 +245,18 @@ The included `render.yaml` also mounts a persistent disk at `/app/workspace`, so
 
 ### Vercel frontend
 
-The frontend can be deployed from the same repo without a build step. After the first deploy:
+The frontend can be deployed from the same repo without a build step.
+
+Recommended Vercel project settings:
+
+1. Set `Root Directory` to `web`
+2. Set `Framework Preset` to `Other`
+3. Leave `Build Command` empty
+4. Leave `Output Directory` empty
+
+The `web/vercel.json` file handles clean routes for `/` and `/app`.
+
+After the first deploy:
 
 1. Open `/app`
 2. Paste the Render backend URL into the `Render backend URL` field
