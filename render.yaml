@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: helix-proto
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    autoDeploy: false
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: HELIX_WORKSPACE_ROOT
+        value: /app/workspace

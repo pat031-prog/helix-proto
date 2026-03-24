@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Helix Proto App</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/">Helix Proto</a>
+      <div class="topbar-note">Local streaming runtime + agent layer</div>
+    </header>
+
+    <main class="app-layout">
+      <aside class="sidebar">
+        <button class="tab-button active" data-tab="chat">Chat</button>
+        <button class="tab-button" data-tab="agent">Agent</button>
+        <button class="tab-button" data-tab="knowledge">Knowledge</button>
+      </aside>
+
+      <section class="panel-stack">
+        <section class="panel active" data-panel="chat">
+          <div class="panel-header">
+            <h1>Chat Stream</h1>
+            <p>Stream tokens from a prepared model alias over SSE.</p>
+          </div>
+          <form id="chat-form" class="card form-grid">
+            <label>
+              <span>Model Alias</span>
+              <select id="chat-alias"></select>
+            </label>
+            <label>
+              <span>Max New Tokens</span>
+              <input id="chat-max-tokens" type="number" min="1" value="32">
+            </label>
+            <label class="span-2">
+              <span>Prompt</span>
+              <textarea id="chat-prompt" rows="4" placeholder="Ask the local model something..."></textarea>
+            </label>
+            <div class="actions span-2">
+              <button class="button button-primary" type="submit">Stream Chat</button>
+            </div>
+          </form>
+          <div class="card output-card">
+            <div class="output-meta" id="chat-meta"></div>
+            <pre id="chat-output" class="output"></pre>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="agent">
+          <div class="panel-header">
+            <h1>Agent Run</h1>
+            <p>Observe plan, tool calls, retrieval, and final answer in real time.</p>
+          </div>
+          <form id="agent-form" class="card form-grid">
+            <label>
+              <span>Agent Name</span>
+              <input id="agent-name" value="helix-mail">
+            </label>
+            <label>
+              <span>Default Model Alias</span>
+              <select id="agent-model-alias">
+                <option value="">None</option>
+              </select>
+            </label>
+            <label class="span-2">
+              <span>Goal</span>
+              <textarea id="agent-goal" rows="4" placeholder="What should the agent solve?"></textarea>
+            </label>
+            <div class="actions span-2">
+              <button class="button button-primary" type="submit">Run Agent</button>
+            </div>
+          </form>
+          <div class="card output-card">
+            <div class="output-meta" id="agent-meta"></div>
+            <pre id="agent-output" class="output"></pre>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="knowledge">
+          <div class="panel-header">
+            <h1>Knowledge Base</h1>
+            <p>Add text snippets to an agent knowledge base and search them back.</p>
+          </div>
+          <form id="knowledge-add-form" class="card form-grid">
+            <label>
+              <span>Agent Name</span>
+              <input id="knowledge-agent" value="helix-mail">
+            </label>
+            <label>
+              <span>Source</span>
+              <input id="knowledge-source" value="web-note">
+            </label>
+            <label class="span-2">
+              <span>Text</span>
+              <textarea id="knowledge-text" rows="5" placeholder="Paste notes, product ideas, legal snippets, or context here..."></textarea>
+            </label>
+            <div class="actions span-2">
+              <button class="button button-primary" type="submit">Add Knowledge</button>
+            </div>
+          </form>
+          <form id="knowledge-search-form" class="card form-grid">
+            <label>
+              <span>Agent Name</span>
+              <input id="knowledge-search-agent" value="helix-mail">
+            </label>
+            <label>
+              <span>Top K</span>
+              <input id="knowledge-top-k" type="number" min="1" value="4">
+            </label>
+            <label class="span-2">
+              <span>Search Query</span>
+              <input id="knowledge-query" placeholder="Search the current knowledge base">
+            </label>
+            <div class="actions span-2">
+              <button class="button button-primary" type="submit">Search</button>
+            </div>
+          </form>
+          <div class="card output-card">
+            <div class="output-meta" id="knowledge-meta"></div>
+            <pre id="knowledge-output" class="output"></pre>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "helix-proto"
+version = "0.3.0"
+description = "Streaming tensor runtime for block-compressed Hugging Face exports."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26"]
+
+[project.optional-dependencies]
+agent = ["pypdf>=4.2"]
+hf = [
+    "huggingface_hub>=0.23",
+    "safetensors>=0.4",
+    "torch>=2.2",
+    "transformers>=4.40",
+]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+helix-proto = "helix_proto.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
