@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import mimetypes
+import os
 import time
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -53,6 +54,24 @@ def _json_ready(value: Any) -> Any:
     if isinstance(value, np.generic):
         return value.item()
     return value
+
+
+def _cors_origins() -> list[str]:
+    raw = os.environ.get("HELIX_CORS_ORIGINS", "")
+    return [item.strip() for item in raw.split(",") if item.strip()]
+
+
+def _allowed_origin(request_origin: str | None) -> str | None:
+    if not request_origin:
+        return None
+    configured = _cors_origins()
+    if not configured:
+        return request_origin
+    if "*" in configured:
+        return "*"
+    if request_origin in configured:
+        return request_origin
+    return None
 
 
 class HelixRuntime:
@@ -401,6 +420,14 @@ class HelixRuntime:
 class _HelixHandler(BaseHTTPRequestHandler):
     runtime: HelixRuntime
 
+    def _apply_cors_headers(self) -> None:
+        allowed_origin = _allowed_origin(self.headers.get("Origin"))
+        if allowed_origin:
+            self.send_header("Access-Control-Allow-Origin", allowed_origin)
+            self.send_header("Vary", "Origin")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+
     def _read_json(self) -> dict[str, Any]:
         length = int(self.headers.get("Content-Length", "0"))
         if length <= 0:
@@ -413,6 +440,7 @@ class _HelixHandler(BaseHTTPRequestHandler):
     def _send_json(self, payload: Any, *, status: HTTPStatus = HTTPStatus.OK) -> None:
         body = json.dumps(_json_ready(payload), indent=2).encode("utf-8")
         self.send_response(status)
+        self._apply_cors_headers()
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
@@ -420,6 +448,7 @@ class _HelixHandler(BaseHTTPRequestHandler):
 
     def _send_text(self, body: bytes, *, content_type: str, status: HTTPStatus = HTTPStatus.OK) -> None:
         self.send_response(status)
+        self._apply_cors_headers()
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
@@ -427,6 +456,7 @@ class _HelixHandler(BaseHTTPRequestHandler):
 
     def _send_sse_headers(self) -> None:
         self.send_response(HTTPStatus.OK)
+        self._apply_cors_headers()
         self.send_header("Content-Type", "text/event-stream; charset=utf-8")
         self.send_header("Cache-Control", "no-cache")
         self.send_header("Connection", "close")
@@ -452,6 +482,11 @@ class _HelixHandler(BaseHTTPRequestHandler):
             path.read_bytes(),
             content_type=content_type or "application/octet-stream",
         )
+
+    def do_OPTIONS(self) -> None:  # noqa: N802
+        self.send_response(HTTPStatus.NO_CONTENT)
+        self._apply_cors_headers()
+        self.end_headers()
 
     def do_GET(self) -> None:  # noqa: N802
         path = urlparse(self.path).path

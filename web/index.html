@@ -4,36 +4,91 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Helix Proto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    >
     <link rel="stylesheet" href="/static/styles.css">
   </head>
   <body class="landing-shell">
-    <main class="landing">
-      <section class="hero">
-        <p class="eyebrow">Helix Proto 0.3.0</p>
-        <h1>Compressed inference, tools, memory, and an agent loop in one local stack.</h1>
-        <p class="lede">
-          A block-compressed runtime with GPT streaming, persistent sessions, RAG, episodic memory,
-          tool calling, and an agent loop that can already ingest the original Josh mail and query it back.
-        </p>
-        <div class="hero-actions">
-          <a class="button button-primary" href="/app">Open Web App</a>
-          <a class="button button-secondary" href="/models">View API</a>
-        </div>
-      </section>
+    <div class="grid-backdrop" aria-hidden="true"></div>
+    <main class="frame-shell">
+      <section class="frame-panel landing-frame">
+        <header class="rail top-rail">
+          <div class="brand-lockup">
+            <span class="brand-mark">H</span>
+            <span>
+              <strong>HELIX_PROTO</strong>
+              <small>compressed runtime / agent layer</small>
+            </span>
+          </div>
+          <div class="rail-actions">
+            <a class="micro-link" href="https://github.com/pat031-prog/helix-proto">GitHub</a>
+            <a class="button button-primary button-compact" href="/app">Open App</a>
+          </div>
+        </header>
 
-      <section class="feature-grid">
-        <article class="feature-card">
-          <h2>Runtime</h2>
-          <p>Compressed tensor stores, KV cache, sessions, tokenizer-aware text generation, and streaming GPT.</p>
-        </article>
-        <article class="feature-card">
-          <h2>Agent</h2>
-          <p>Plan, tool, observation, final. With local or remote planner routing and a heuristic safety net.</p>
-        </article>
-        <article class="feature-card">
-          <h2>Memory</h2>
-          <p>Knowledge chunks, episodic recall, run traces, and searchable context under the workspace.</p>
-        </article>
+        <section class="landing-grid">
+          <article class="module landing-hero">
+            <div class="module-tag">System Overview</div>
+            <p class="micro-copy">From block-compressed tensors to deployable agent workflows</p>
+            <h1 class="hero-title hero-title-large">HELIX FIELD</h1>
+            <p class="hero-copy">
+              A single stack for compressed inference, persistent sessions, tool calling, knowledge ingestion,
+              streaming chat, and agent traces. Built to feel like a lab, not a dashboard template.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="/app">Launch Operator Console</a>
+              <a class="button button-secondary" href="https://github.com/pat031-prog/helix-proto">Inspect Repository</a>
+            </div>
+          </article>
+
+          <article class="module summary-module">
+            <div class="metric-label">Current Shape</div>
+            <ul class="summary-list">
+              <li>Compressed tensor format with block integrity</li>
+              <li>HF export path and GPT/BERT validation</li>
+              <li>KV cache, sessions, and runtime caching</li>
+              <li>Tool registry, memory, RAG, and traces</li>
+              <li>REST API plus browser UI and SSE</li>
+            </ul>
+          </article>
+
+          <article class="module stat-strip">
+            <div>
+              <span class="metric-value metric-inline">16</span>
+              <span class="metric-foot">tests passing in the current local suite</span>
+            </div>
+            <div>
+              <span class="metric-value metric-inline">2</span>
+              <span class="metric-foot">deploy targets from one GitHub repo</span>
+            </div>
+            <div>
+              <span class="metric-value metric-inline">0.3.0</span>
+              <span class="metric-foot">agent-ready product snapshot</span>
+            </div>
+          </article>
+
+          <article class="module card-cluster">
+            <div class="mini-card">
+              <span class="module-tag">Runtime</span>
+              <h2>Worker Engine</h2>
+              <p>Streaming generation, tokenizer-aware prompts, session resume, and cached tensor access.</p>
+            </div>
+            <div class="mini-card">
+              <span class="module-tag">Agent</span>
+              <h2>Loop + Memory</h2>
+              <p>Plan, tool, observation, final. Episodic memory, knowledge chunks, and run traces included.</p>
+            </div>
+            <div class="mini-card">
+              <span class="module-tag">Deploy</span>
+              <h2>Vercel + Render</h2>
+              <p>Frontend can live on Vercel while the Python runtime and workspace stay on Render.</p>
+            </div>
+          </article>
+        </section>
       </section>
     </main>
   </body>

@@ -4,127 +4,203 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Helix Proto App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    >
     <link rel="stylesheet" href="/static/styles.css">
   </head>
   <body class="app-shell">
-    <header class="topbar">
-      <a class="brand" href="/">Helix Proto</a>
-      <div class="topbar-note">Local streaming runtime + agent layer</div>
-    </header>
-
-    <main class="app-layout">
-      <aside class="sidebar">
-        <button class="tab-button active" data-tab="chat">Chat</button>
-        <button class="tab-button" data-tab="agent">Agent</button>
-        <button class="tab-button" data-tab="knowledge">Knowledge</button>
-      </aside>
-
-      <section class="panel-stack">
-        <section class="panel active" data-panel="chat">
-          <div class="panel-header">
-            <h1>Chat Stream</h1>
-            <p>Stream tokens from a prepared model alias over SSE.</p>
+    <div class="grid-backdrop" aria-hidden="true"></div>
+    <main class="frame-shell">
+      <div class="frame-panel app-frame">
+        <header class="rail top-rail">
+          <a class="brand-lockup" href="/">
+            <span class="brand-mark">H</span>
+            <span>
+              <strong>HELIX_PROTO</strong>
+              <small>worker runtime + agent lab</small>
+            </span>
+          </a>
+          <div class="rail-actions">
+            <a class="micro-link" href="/">Back to Landing</a>
+            <span class="status-pill status-pill-warm">V0.3.0</span>
           </div>
-          <form id="chat-form" class="card form-grid">
-            <label>
-              <span>Model Alias</span>
-              <select id="chat-alias"></select>
-            </label>
-            <label>
-              <span>Max New Tokens</span>
-              <input id="chat-max-tokens" type="number" min="1" value="32">
-            </label>
-            <label class="span-2">
-              <span>Prompt</span>
-              <textarea id="chat-prompt" rows="4" placeholder="Ask the local model something..."></textarea>
-            </label>
-            <div class="actions span-2">
-              <button class="button button-primary" type="submit">Stream Chat</button>
+        </header>
+
+        <section class="dashboard-grid">
+          <article class="module hero-module">
+            <div class="module-tag">Live System</div>
+            <p class="micro-copy">Compressed inference / tools / memory / agent loop</p>
+            <h1 class="hero-title">AGENT LAB</h1>
+            <p class="hero-copy">
+              A deployable control surface for Helix Proto. Stream chat, run the planner loop, and
+              search persistent knowledge from one modular interface.
+            </p>
+          </article>
+
+          <article class="module metric-module">
+            <div class="metric-label">Backend</div>
+            <div class="metric-value" id="connection-status">Checking</div>
+            <p class="metric-foot" id="workspace-path">Waiting for health check...</p>
+          </article>
+
+          <article class="module metric-module">
+            <div class="metric-label">Prepared Models</div>
+            <div class="metric-value" id="models-count">00</div>
+            <p class="metric-foot">Registry discovered from the connected backend.</p>
+          </article>
+
+          <article class="module endpoint-module">
+            <div class="module-tag">API Link</div>
+            <label class="endpoint-label" for="api-base">Render backend URL</label>
+            <div class="endpoint-row">
+              <input id="api-base" type="url" placeholder="https://your-backend.onrender.com">
+              <button class="button button-primary" id="api-save" type="button">Connect</button>
             </div>
-          </form>
-          <div class="card output-card">
-            <div class="output-meta" id="chat-meta"></div>
-            <pre id="chat-output" class="output"></pre>
+            <p class="module-note">
+              Saved in this browser. Leave empty to use same-origin mode when the frontend is served by the backend.
+            </p>
+          </article>
+        </section>
+
+        <section class="toolbar-row">
+          <div class="toolbar-group">
+            <button class="tab-button active" data-tab="chat" type="button">Chat Stream</button>
+            <button class="tab-button" data-tab="agent" type="button">Agent Run</button>
+            <button class="tab-button" data-tab="knowledge" type="button">Knowledge</button>
+          </div>
+          <div class="toolbar-summary">
+            <span class="status-pill" id="api-mode-pill">Same Origin</span>
+            <span class="status-pill" id="model-pill">No Model Loaded</span>
+          </div>
+        </section>
+
+        <section class="panel active" data-panel="chat">
+          <div class="work-grid">
+            <article class="module form-module">
+              <div class="module-tag">Stream Tokens</div>
+              <h2 class="section-title">Chat Console</h2>
+              <form id="chat-form" class="form-grid">
+                <label>
+                  <span>Model Alias</span>
+                  <select id="chat-alias"></select>
+                </label>
+                <label>
+                  <span>Max New Tokens</span>
+                  <input id="chat-max-tokens" type="number" min="1" value="48">
+                </label>
+                <label class="span-2">
+                  <span>Prompt</span>
+                  <textarea id="chat-prompt" rows="7" placeholder="Ask the local worker model something useful..."></textarea>
+                </label>
+                <div class="actions span-2">
+                  <button class="button button-primary" type="submit">Start Stream</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="module output-module">
+              <div class="module-tag">Live Output</div>
+              <div class="console-meta" id="chat-meta">Idle</div>
+              <pre id="chat-output" class="console-output"></pre>
+            </article>
           </div>
         </section>
 
         <section class="panel" data-panel="agent">
-          <div class="panel-header">
-            <h1>Agent Run</h1>
-            <p>Observe plan, tool calls, retrieval, and final answer in real time.</p>
-          </div>
-          <form id="agent-form" class="card form-grid">
-            <label>
-              <span>Agent Name</span>
-              <input id="agent-name" value="helix-mail">
-            </label>
-            <label>
-              <span>Default Model Alias</span>
-              <select id="agent-model-alias">
-                <option value="">None</option>
-              </select>
-            </label>
-            <label class="span-2">
-              <span>Goal</span>
-              <textarea id="agent-goal" rows="4" placeholder="What should the agent solve?"></textarea>
-            </label>
-            <div class="actions span-2">
-              <button class="button button-primary" type="submit">Run Agent</button>
-            </div>
-          </form>
-          <div class="card output-card">
-            <div class="output-meta" id="agent-meta"></div>
-            <pre id="agent-output" class="output"></pre>
+          <div class="work-grid">
+            <article class="module form-module">
+              <div class="module-tag">Planner Loop</div>
+              <h2 class="section-title">Agent Control</h2>
+              <form id="agent-form" class="form-grid">
+                <label>
+                  <span>Agent Name</span>
+                  <input id="agent-name" value="helix-mail">
+                </label>
+                <label>
+                  <span>Default Model Alias</span>
+                  <select id="agent-model-alias">
+                    <option value="">None</option>
+                  </select>
+                </label>
+                <label class="span-2">
+                  <span>Goal</span>
+                  <textarea id="agent-goal" rows="7" placeholder="Ask for a summary, a retrieval pass, or a tool-backed task..."></textarea>
+                </label>
+                <div class="actions span-2">
+                  <button class="button button-primary" type="submit">Run Agent</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="module output-module">
+              <div class="module-tag">Trace Feed</div>
+              <div class="console-meta" id="agent-meta">Idle</div>
+              <pre id="agent-output" class="console-output"></pre>
+            </article>
           </div>
         </section>
 
         <section class="panel" data-panel="knowledge">
-          <div class="panel-header">
-            <h1>Knowledge Base</h1>
-            <p>Add text snippets to an agent knowledge base and search them back.</p>
-          </div>
-          <form id="knowledge-add-form" class="card form-grid">
-            <label>
-              <span>Agent Name</span>
-              <input id="knowledge-agent" value="helix-mail">
-            </label>
-            <label>
-              <span>Source</span>
-              <input id="knowledge-source" value="web-note">
-            </label>
-            <label class="span-2">
-              <span>Text</span>
-              <textarea id="knowledge-text" rows="5" placeholder="Paste notes, product ideas, legal snippets, or context here..."></textarea>
-            </label>
-            <div class="actions span-2">
-              <button class="button button-primary" type="submit">Add Knowledge</button>
-            </div>
-          </form>
-          <form id="knowledge-search-form" class="card form-grid">
-            <label>
-              <span>Agent Name</span>
-              <input id="knowledge-search-agent" value="helix-mail">
-            </label>
-            <label>
-              <span>Top K</span>
-              <input id="knowledge-top-k" type="number" min="1" value="4">
-            </label>
-            <label class="span-2">
-              <span>Search Query</span>
-              <input id="knowledge-query" placeholder="Search the current knowledge base">
-            </label>
-            <div class="actions span-2">
-              <button class="button button-primary" type="submit">Search</button>
-            </div>
-          </form>
-          <div class="card output-card">
-            <div class="output-meta" id="knowledge-meta"></div>
-            <pre id="knowledge-output" class="output"></pre>
+          <div class="knowledge-grid">
+            <article class="module form-module">
+              <div class="module-tag">Ingest</div>
+              <h2 class="section-title">Add Knowledge</h2>
+              <form id="knowledge-add-form" class="form-grid">
+                <label>
+                  <span>Agent Name</span>
+                  <input id="knowledge-agent" value="helix-mail">
+                </label>
+                <label>
+                  <span>Source</span>
+                  <input id="knowledge-source" value="web-note">
+                </label>
+                <label class="span-2">
+                  <span>Text</span>
+                  <textarea id="knowledge-text" rows="7" placeholder="Paste strategy notes, legal clauses, or product context..."></textarea>
+                </label>
+                <div class="actions span-2">
+                  <button class="button button-primary" type="submit">Save Chunk</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="module form-module">
+              <div class="module-tag">Recall</div>
+              <h2 class="section-title">Search Knowledge</h2>
+              <form id="knowledge-search-form" class="form-grid">
+                <label>
+                  <span>Agent Name</span>
+                  <input id="knowledge-search-agent" value="helix-mail">
+                </label>
+                <label>
+                  <span>Top K</span>
+                  <input id="knowledge-top-k" type="number" min="1" value="4">
+                </label>
+                <label class="span-2">
+                  <span>Search Query</span>
+                  <input id="knowledge-query" placeholder="Search the persistent knowledge base">
+                </label>
+                <div class="actions span-2">
+                  <button class="button button-primary" type="submit">Search</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="module output-module knowledge-output-module">
+              <div class="module-tag">Result Set</div>
+              <div class="console-meta" id="knowledge-meta">Idle</div>
+              <pre id="knowledge-output" class="console-output"></pre>
+            </article>
           </div>
         </section>
-      </section>
+      </div>
     </main>
 
+    <script src="/static/runtime-config.js"></script>
     <script src="/static/app.js"></script>
   </body>
 </html>

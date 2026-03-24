@@ -220,6 +220,39 @@ A lightweight browser UI ships in [`web/`](./web):
 
 It is intentionally dependency-light so the product is visible now, without waiting for a separate frontend build pipeline.
 
+The UI is also ready for split deploys:
+
+- backend on Render with persistent workspace storage
+- frontend on Vercel from the same repo
+- runtime API URL configurable in the browser and persisted in `localStorage`
+
+## Deploy from one repo
+
+This repository is set up so two platforms can read different parts of the same codebase:
+
+- `Render` deploys the backend runtime from the repo root using [`render.yaml`](./render.yaml) and [`Dockerfile`](./Dockerfile)
+- `Vercel` deploys the static frontend using [`vercel.json`](./vercel.json), which maps `/` and `/app` to files under [`web/`](./web)
+
+### Render backend
+
+Recommended env values:
+
+- `PORT=8080`
+- `HELIX_WORKSPACE_ROOT=/app/workspace`
+- `HELIX_CORS_ORIGINS=https://your-vercel-project.vercel.app`
+
+The included `render.yaml` also mounts a persistent disk at `/app/workspace`, so prepared models, sessions, knowledge, and traces survive restarts.
+
+### Vercel frontend
+
+The frontend can be deployed from the same repo without a build step. After the first deploy:
+
+1. Open `/app`
+2. Paste the Render backend URL into the `Render backend URL` field
+3. Click `Connect`
+
+That URL is saved locally in the browser, so the app can call the Render API and SSE endpoints from the Vercel-hosted frontend.
+
 ## Validation commands
 
 Format path:

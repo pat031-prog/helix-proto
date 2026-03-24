@@ -4,9 +4,16 @@ services:
     env: docker
     plan: starter
     dockerfilePath: ./Dockerfile
-    autoDeploy: false
+    autoDeploy: true
+    healthCheckPath: /health
     envVars:
       - key: PORT
         value: 8080
       - key: HELIX_WORKSPACE_ROOT
         value: /app/workspace
+      - key: HELIX_CORS_ORIGINS
+        value: https://your-vercel-project.vercel.app
+    disk:
+      name: helix-data
+      mountPath: /app/workspace
+      sizeGB: 5

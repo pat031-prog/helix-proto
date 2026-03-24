@@ -1,0 +1,17 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/web/index.html"
+    },
+    {
+      "source": "/app",
+      "destination": "/web/app.html"
+    },
+    {
+      "source": "/static/(.*)",
+      "destination": "/web/$1"
+    }
+  ]
+}
